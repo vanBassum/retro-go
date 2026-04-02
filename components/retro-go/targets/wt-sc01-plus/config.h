@@ -7,6 +7,7 @@
 #define RG_STORAGE_SDSPI_SPEED      SDMMC_FREQ_DEFAULT
 
 
+
 // Audio
 #define RG_AUDIO_USE_INT_DAC        0   // 0 = Disable, 1 = GPIO25, 2 = GPIO26, 3 = Both
 #define RG_AUDIO_USE_EXT_DAC        1   // 0 = Disable, 1 = Enable

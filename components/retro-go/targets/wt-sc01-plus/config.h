@@ -1,14 +1,19 @@
 // Target definition
 #define RG_TARGET_NAME             "WT-SC01-PLUS"
 
-// Storage
-// The WT-SC01 Plus has no built-in SD card slot. Connect one via the extension header,
-// or use flash storage by uncommenting RG_STORAGE_FLASH_PARTITION below.
+// Storage (onboard SD card via SPI)
 #define RG_STORAGE_ROOT             "/sd"
 #define RG_STORAGE_SDSPI_HOST       SPI2_HOST
-#define RG_STORAGE_SDSPI_SPEED      SDMMC_FREQ_DEFAULT
-// #define RG_STORAGE_ROOT             "/flash"
-// #define RG_STORAGE_FLASH_PARTITION  "vfs"
+#define RG_STORAGE_SDSPI_SPEED      SDMMC_FREQ_PROBING
+
+// Pull-ups and CS init for SD card
+#define RG_CUSTOM_PLATFORM_INIT()                                        \
+    gpio_set_direction(GPIO_NUM_41, GPIO_MODE_OUTPUT);                   \
+    gpio_set_level(GPIO_NUM_41, 1);                                      \
+    gpio_set_pull_mode(GPIO_NUM_38, GPIO_PULLUP_ONLY);                   \
+    gpio_set_pull_mode(GPIO_NUM_40, GPIO_PULLUP_ONLY);                   \
+    gpio_set_pull_mode(GPIO_NUM_39, GPIO_PULLUP_ONLY);                   \
+    gpio_set_pull_mode(GPIO_NUM_41, GPIO_PULLUP_ONLY);
 
 // Audio
 #define RG_AUDIO_USE_INT_DAC        0   // 0 = Disable, 1 = GPIO25, 2 = GPIO26, 3 = Both
@@ -76,13 +81,14 @@
 #define RG_GPIO_LCD_RST             GPIO_NUM_4
 #define RG_GPIO_LCD_BCKL            GPIO_NUM_45
 
-// SPI SD Card (directly accessible pins on extension header - adjust to your wiring)
-#define RG_GPIO_SDSPI_MISO          GPIO_NUM_13
-#define RG_GPIO_SDSPI_MOSI          GPIO_NUM_11
-#define RG_GPIO_SDSPI_CLK           GPIO_NUM_12
-#define RG_GPIO_SDSPI_CS            GPIO_NUM_10
 
-// External I2S DAC (accent pins on extension header - adjust to your wiring)
+// SPI SD Card (onboard)
+#define RG_GPIO_SDSPI_MISO          GPIO_NUM_38
+#define RG_GPIO_SDSPI_MOSI          GPIO_NUM_40
+#define RG_GPIO_SDSPI_CLK           GPIO_NUM_39
+#define RG_GPIO_SDSPI_CS            GPIO_NUM_41
+
+// External I2S DAC (extension header - adjust to your wiring)
 #define RG_GPIO_SND_I2S_BCK         GPIO_NUM_1
 #define RG_GPIO_SND_I2S_WS          GPIO_NUM_2
 #define RG_GPIO_SND_I2S_DATA        GPIO_NUM_14

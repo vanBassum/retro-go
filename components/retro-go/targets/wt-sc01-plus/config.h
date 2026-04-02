@@ -3,17 +3,9 @@
 
 // Storage (onboard SD card via SPI)
 #define RG_STORAGE_ROOT             "/sd"
-#define RG_STORAGE_SDSPI_HOST       SPI2_HOST
-#define RG_STORAGE_SDSPI_SPEED      SDMMC_FREQ_PROBING
+#define RG_STORAGE_SDSPI_HOST       SPI3_HOST
+#define RG_STORAGE_SDSPI_SPEED      SDMMC_FREQ_DEFAULT
 
-// Pull-ups and CS init for SD card
-#define RG_CUSTOM_PLATFORM_INIT()                                        \
-    gpio_set_direction(GPIO_NUM_41, GPIO_MODE_OUTPUT);                   \
-    gpio_set_level(GPIO_NUM_41, 1);                                      \
-    gpio_set_pull_mode(GPIO_NUM_38, GPIO_PULLUP_ONLY);                   \
-    gpio_set_pull_mode(GPIO_NUM_40, GPIO_PULLUP_ONLY);                   \
-    gpio_set_pull_mode(GPIO_NUM_39, GPIO_PULLUP_ONLY);                   \
-    gpio_set_pull_mode(GPIO_NUM_41, GPIO_PULLUP_ONLY);
 
 // Audio
 #define RG_AUDIO_USE_INT_DAC        0   // 0 = Disable, 1 = GPIO25, 2 = GPIO26, 3 = Both
@@ -88,10 +80,10 @@
 #define RG_GPIO_SDSPI_CLK           GPIO_NUM_39
 #define RG_GPIO_SDSPI_CS            GPIO_NUM_41
 
-// External I2S DAC (extension header - adjust to your wiring)
-#define RG_GPIO_SND_I2S_BCK         GPIO_NUM_1
-#define RG_GPIO_SND_I2S_WS          GPIO_NUM_2
-#define RG_GPIO_SND_I2S_DATA        GPIO_NUM_14
+// Onboard I2S audio amplifier
+#define RG_GPIO_SND_I2S_BCK         GPIO_NUM_36
+#define RG_GPIO_SND_I2S_WS          GPIO_NUM_35
+#define RG_GPIO_SND_I2S_DATA        GPIO_NUM_37
 
 // I2C Bus (FT5x06 touch controller)
 #define RG_GPIO_I2C_SDA             GPIO_NUM_6

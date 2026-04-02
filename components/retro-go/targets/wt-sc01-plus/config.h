@@ -45,16 +45,17 @@
 // Refer to rg_input.h to see all available RG_KEY_* and RG_GAMEPAD_*_MAP types
 //
 // Example with buttons wired to extension header:
-// #define RG_GAMEPAD_GPIO_MAP {\
-//     {RG_KEY_UP,     .num = GPIO_NUM_10, .pullup = 1, .level = 0},\
-//     {RG_KEY_DOWN,   .num = GPIO_NUM_11, .pullup = 1, .level = 0},\
-//     {RG_KEY_LEFT,   .num = GPIO_NUM_12, .pullup = 1, .level = 0},\
-//     {RG_KEY_RIGHT,  .num = GPIO_NUM_13, .pullup = 1, .level = 0},\
-//     {RG_KEY_A,      .num = GPIO_NUM_14, .pullup = 1, .level = 0},\
-//     {RG_KEY_B,      .num = GPIO_NUM_21, .pullup = 1, .level = 0},\
-//     {RG_KEY_SELECT, .num = GPIO_NUM_1,  .pullup = 1, .level = 0},\
-//     {RG_KEY_START,  .num = GPIO_NUM_2,  .pullup = 1, .level = 0},\
-//     {RG_KEY_MENU,   .num = GPIO_NUM_38, .pullup = 1, .level = 0},\
+//
+// #define RG_GAMEPAD_GPIO_MAP {
+//     {RG_KEY_UP,     .num = GPIO_NUM_10, .pullup = 1, .level = 0},
+//     {RG_KEY_DOWN,   .num = GPIO_NUM_11, .pullup = 1, .level = 0},
+//     {RG_KEY_LEFT,   .num = GPIO_NUM_12, .pullup = 1, .level = 0},
+//     {RG_KEY_RIGHT,  .num = GPIO_NUM_13, .pullup = 1, .level = 0},
+//     {RG_KEY_A,      .num = GPIO_NUM_14, .pullup = 1, .level = 0},
+//     {RG_KEY_B,      .num = GPIO_NUM_21, .pullup = 1, .level = 0},
+//     {RG_KEY_SELECT, .num = GPIO_NUM_1,  .pullup = 1, .level = 0},
+//     {RG_KEY_START,  .num = GPIO_NUM_2,  .pullup = 1, .level = 0},
+//     {RG_KEY_MENU,   .num = GPIO_NUM_38, .pullup = 1, .level = 0},
 // }
 
 // Battery

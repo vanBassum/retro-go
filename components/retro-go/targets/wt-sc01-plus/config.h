@@ -43,6 +43,7 @@
 #define RG_GPIO_GAMEPAD_SPI_CLK         GPIO_NUM_11
 #define RG_GPIO_GAMEPAD_SPI_MOSI        GPIO_NUM_12
 #define RG_GPIO_GAMEPAD_SPI_MISO        GPIO_NUM_13
+#define RG_GPIO_GAMEPAD_SPI_RST         GPIO_NUM_14
 #define RG_GAMEPAD_MCP23S17_MAP {\
     {RG_KEY_START,  .num = 0,  .level = 0},\
     {RG_KEY_SELECT, .num = 1,  .level = 0},\

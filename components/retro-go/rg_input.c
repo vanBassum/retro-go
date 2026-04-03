@@ -49,6 +49,7 @@ static spi_device_handle_t mcp23s17_spi;
 #define MCP23S17_GPPUB    0x0D
 #define MCP23S17_GPIOA    0x12
 #define MCP23S17_GPIOB    0x13
+#define MCP23S17_IOCON    0x0A
 #define MCP23S17_OPCODE_W 0x40
 #define MCP23S17_OPCODE_R 0x41
 
@@ -65,7 +66,7 @@ static uint16_t mcp23s17_read_buttons(void)
     uint8_t rx[4] = {0};
     spi_transaction_t t = {.length = 32, .tx_buffer = tx, .rxlength = 32, .rx_buffer = rx};
     spi_device_polling_transmit(mcp23s17_spi, &t);
-    return (rx[3] << 8) | rx[2]; // GPIOA = low byte, GPIOB = high byte
+    return (rx[3] << 8) | rx[2];
 }
 #endif
 #ifdef RG_GAMEPAD_VIRT_MAP
@@ -235,6 +236,11 @@ bool rg_input_read_gamepad_raw(uint32_t *out)
 #if defined(RG_GAMEPAD_MCP23S17_MAP)
     {
         uint16_t buttons = mcp23s17_read_buttons();
+        static uint16_t prev_buttons = 0xFFFF;
+        if (buttons != prev_buttons) {
+            RG_LOGI("MCP23S17 buttons: 0x%04X", buttons);
+            prev_buttons = buttons;
+        }
         for (size_t i = 0; i < RG_COUNT(keymap_mcp23s17); ++i)
         {
             const rg_keymap_mcp23s17_t *mapping = &keymap_mcp23s17[i];
@@ -390,18 +396,30 @@ void rg_input_init(void)
         .quadhd_io_num = -1,
     };
     spi_bus_initialize(RG_GAMEPAD_SPI_HOST, &mcp_bus_cfg, SPI_DMA_DISABLED);
+    gpio_set_pull_mode(RG_GPIO_GAMEPAD_SPI_MISO, GPIO_PULLUP_ONLY);
     spi_device_interface_config_t mcp_dev_cfg = {
         .clock_speed_hz = 8000000, // MCP23S17 supports up to 10MHz
         .mode = 0,
         .spics_io_num = RG_GPIO_GAMEPAD_SPI_CS,
         .queue_size = 1,
+        .flags = 0,
     };
     spi_bus_add_device(RG_GAMEPAD_SPI_HOST, &mcp_dev_cfg, &mcp23s17_spi);
+    // Drive RESET# high to take MCP23S17 out of reset
+#ifdef RG_GPIO_GAMEPAD_SPI_RST
+    gpio_set_direction(RG_GPIO_GAMEPAD_SPI_RST, GPIO_MODE_OUTPUT);
+    gpio_set_level(RG_GPIO_GAMEPAD_SPI_RST, 1);
+    rg_usleep(1000); // 1ms for chip to come out of reset
+#endif
+    // Enable HAEN (Hardware Address Enable) so the chip responds to SPI commands
+    mcp23s17_write_reg(MCP23S17_IOCON, 0x08);
     // Configure all pins as inputs with pull-ups
     mcp23s17_write_reg(MCP23S17_IODIRA, 0xFF);
     mcp23s17_write_reg(MCP23S17_IODIRB, 0xFF);
     mcp23s17_write_reg(MCP23S17_GPPUA, 0xFF);
     mcp23s17_write_reg(MCP23S17_GPPUB, 0xFF);
+    uint16_t test = mcp23s17_read_buttons();
+    RG_LOGI("MCP23S17 init done, button state: 0x%04X (expect 0xFFFF if no buttons pressed)", test);
     UPDATE_GLOBAL_MAP(keymap_mcp23s17);
 #endif
 

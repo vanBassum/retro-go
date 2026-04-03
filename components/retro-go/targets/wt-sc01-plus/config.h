@@ -24,7 +24,8 @@
 #define RG_SCREEN_INIT()                                                                         \
     ILI9341_CMD(0xF0, 0xC3);                /* Enable extension command 2 part I */              \
     ILI9341_CMD(0xF0, 0x96);                /* Enable extension command 2 part II */             \
-    ILI9341_CMD(0x36, 0x28);                /* Memory Access Control: MV|BGR (landscape) */     \
+    ILI9341_CMD(0x36, 0x28);                /* Memory Access Control: MV|BGR (landscape) */          \
+    ILI9341_CMD(0x21);                      /* Display Inversion ON */                               \
     ILI9341_CMD(0xB4, 0x01);                /* Display Inversion Control: 1-dot */               \
     ILI9341_CMD(0xB6, 0x80, 0x02, 0x3B);    /* Display Function Control */                      \
     ILI9341_CMD(0xE8, 0x40, 0x8A, 0x00, 0x00, 0x29, 0x19, 0xA5, 0x33); /* Display Output Ctrl */ \

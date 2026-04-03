@@ -37,24 +37,26 @@
     ILI9341_CMD(0xF0, 0x69);                /* Disable extension command 2 part II */
 
 
-// Input
-// The WT-SC01 Plus has no physical buttons (GPIO0/BOOT is used by LCD DC).
-// Connect external buttons via the extension header and adjust GPIOs below.
-// Refer to rg_input.h to see all available RG_KEY_* and RG_GAMEPAD_*_MAP types
-//
-// Example with buttons wired to extension header:
-//
-// #define RG_GAMEPAD_GPIO_MAP {
-//     {RG_KEY_UP,     .num = GPIO_NUM_10, .pullup = 1, .level = 0},
-//     {RG_KEY_DOWN,   .num = GPIO_NUM_11, .pullup = 1, .level = 0},
-//     {RG_KEY_LEFT,   .num = GPIO_NUM_12, .pullup = 1, .level = 0},
-//     {RG_KEY_RIGHT,  .num = GPIO_NUM_13, .pullup = 1, .level = 0},
-//     {RG_KEY_A,      .num = GPIO_NUM_14, .pullup = 1, .level = 0},
-//     {RG_KEY_B,      .num = GPIO_NUM_21, .pullup = 1, .level = 0},
-//     {RG_KEY_SELECT, .num = GPIO_NUM_1,  .pullup = 1, .level = 0},
-//     {RG_KEY_START,  .num = GPIO_NUM_2,  .pullup = 1, .level = 0},
-//     {RG_KEY_MENU,   .num = GPIO_NUM_38, .pullup = 1, .level = 0},
-// }
+// Input via MCP23S17 SPI GPIO expander on extension header
+// SPI2 native IOMUX pins: CS=GPIO10, MOSI=GPIO11, CLK=GPIO12, MISO=GPIO13
+#define RG_GPIO_GAMEPAD_SPI_CS          GPIO_NUM_10
+#define RG_GPIO_GAMEPAD_SPI_MOSI        GPIO_NUM_11
+#define RG_GPIO_GAMEPAD_SPI_CLK         GPIO_NUM_12
+#define RG_GPIO_GAMEPAD_SPI_MISO        GPIO_NUM_13
+#define RG_GAMEPAD_MCP23S17_MAP {\
+    {RG_KEY_UP,     .num = 0,  .level = 0},\
+    {RG_KEY_LEFT,   .num = 1,  .level = 0},\
+    {RG_KEY_RIGHT,  .num = 2,  .level = 0},\
+    {RG_KEY_DOWN,   .num = 3,  .level = 0},\
+    {RG_KEY_A,      .num = 4,  .level = 0},\
+    {RG_KEY_B,      .num = 5,  .level = 0},\
+    {RG_KEY_X,      .num = 6,  .level = 0},\
+    {RG_KEY_Y,      .num = 7,  .level = 0},\
+    {RG_KEY_START,  .num = 8,  .level = 0},\
+    {RG_KEY_SELECT, .num = 9,  .level = 0},\
+    {RG_KEY_MENU,   .num = 10, .level = 0},\
+    {RG_KEY_OPTION, .num = 11, .level = 0},\
+}
 
 // Battery
 #define RG_BATTERY_DRIVER           0

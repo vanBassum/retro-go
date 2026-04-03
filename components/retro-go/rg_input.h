@@ -70,6 +70,15 @@ typedef struct
     int level;  // 0-1
 } rg_keymap_serial_t;
 
+// #define RG_GAMEPAD_MCP23S17_MAP {{}, ...} to use MCP23S17 SPI GPIO expander
+// Requires RG_GPIO_GAMEPAD_SPI_CS, and optionally RG_GAMEPAD_SPI_HOST (default SPI2_HOST)
+typedef struct
+{
+    rg_key_t key;
+    int num;    // pin number (0-7=GPA0-GPA7, 8-15=GPB0-GPB7)
+    int level;  // 0-1
+} rg_keymap_mcp23s17_t;
+
 // #define RG_GAMEPAD_VIRT_MAP {{}, ...} to add virtual buttons (eg start+select = menu)
 typedef struct
 {

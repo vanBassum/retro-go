@@ -35,6 +35,39 @@ static rg_keymap_kbd_t keymap_kbd[] = RG_GAMEPAD_KBD_MAP;
 #ifdef RG_GAMEPAD_SERIAL_MAP
 static rg_keymap_serial_t keymap_serial[] = RG_GAMEPAD_SERIAL_MAP;
 #endif
+#ifdef RG_GAMEPAD_MCP23S17_MAP
+#include <driver/spi_master.h>
+static rg_keymap_mcp23s17_t keymap_mcp23s17[] = RG_GAMEPAD_MCP23S17_MAP;
+static spi_device_handle_t mcp23s17_spi;
+#ifndef RG_GAMEPAD_SPI_HOST
+#define RG_GAMEPAD_SPI_HOST SPI2_HOST
+#endif
+// MCP23S17 registers
+#define MCP23S17_IODIRA   0x00
+#define MCP23S17_IODIRB   0x01
+#define MCP23S17_GPPUA    0x0C
+#define MCP23S17_GPPUB    0x0D
+#define MCP23S17_GPIOA    0x12
+#define MCP23S17_GPIOB    0x13
+#define MCP23S17_OPCODE_W 0x40
+#define MCP23S17_OPCODE_R 0x41
+
+static void mcp23s17_write_reg(uint8_t reg, uint8_t val)
+{
+    uint8_t tx[3] = {MCP23S17_OPCODE_W, reg, val};
+    spi_transaction_t t = {.length = 24, .tx_buffer = tx};
+    spi_device_polling_transmit(mcp23s17_spi, &t);
+}
+
+static uint16_t mcp23s17_read_buttons(void)
+{
+    uint8_t tx[4] = {MCP23S17_OPCODE_R, MCP23S17_GPIOA, 0xFF, 0xFF};
+    uint8_t rx[4] = {0};
+    spi_transaction_t t = {.length = 32, .tx_buffer = tx, .rxlength = 32, .rx_buffer = rx};
+    spi_device_polling_transmit(mcp23s17_spi, &t);
+    return (rx[3] << 8) | rx[2]; // GPIOA = low byte, GPIOB = high byte
+}
+#endif
 #ifdef RG_GAMEPAD_VIRT_MAP
 static rg_keymap_virt_t keymap_virt[] = RG_GAMEPAD_VIRT_MAP;
 #endif
@@ -199,6 +232,18 @@ bool rg_input_read_gamepad_raw(uint32_t *out)
     }
 #endif
 
+#if defined(RG_GAMEPAD_MCP23S17_MAP)
+    {
+        uint16_t buttons = mcp23s17_read_buttons();
+        for (size_t i = 0; i < RG_COUNT(keymap_mcp23s17); ++i)
+        {
+            const rg_keymap_mcp23s17_t *mapping = &keymap_mcp23s17[i];
+            if (((buttons >> mapping->num) & 1) == mapping->level)
+                state |= mapping->key;
+        }
+    }
+#endif
+
 #if defined(RG_GAMEPAD_VIRT_MAP)
     for (size_t i = 0; i < RG_COUNT(keymap_virt); ++i)
     {
@@ -334,6 +379,31 @@ void rg_input_init(void)
     UPDATE_GLOBAL_MAP(keymap_serial);
 #endif
 
+
+#if defined(RG_GAMEPAD_MCP23S17_MAP)
+    RG_LOGI("Initializing MCP23S17 SPI gamepad driver...");
+    spi_bus_config_t mcp_bus_cfg = {
+        .mosi_io_num = RG_GPIO_GAMEPAD_SPI_MOSI,
+        .miso_io_num = RG_GPIO_GAMEPAD_SPI_MISO,
+        .sclk_io_num = RG_GPIO_GAMEPAD_SPI_CLK,
+        .quadwp_io_num = -1,
+        .quadhd_io_num = -1,
+    };
+    spi_bus_initialize(RG_GAMEPAD_SPI_HOST, &mcp_bus_cfg, SPI_DMA_DISABLED);
+    spi_device_interface_config_t mcp_dev_cfg = {
+        .clock_speed_hz = 8000000, // MCP23S17 supports up to 10MHz
+        .mode = 0,
+        .spics_io_num = RG_GPIO_GAMEPAD_SPI_CS,
+        .queue_size = 1,
+    };
+    spi_bus_add_device(RG_GAMEPAD_SPI_HOST, &mcp_dev_cfg, &mcp23s17_spi);
+    // Configure all pins as inputs with pull-ups
+    mcp23s17_write_reg(MCP23S17_IODIRA, 0xFF);
+    mcp23s17_write_reg(MCP23S17_IODIRB, 0xFF);
+    mcp23s17_write_reg(MCP23S17_GPPUA, 0xFF);
+    mcp23s17_write_reg(MCP23S17_GPPUB, 0xFF);
+    UPDATE_GLOBAL_MAP(keymap_mcp23s17);
+#endif
 
 #if RG_BATTERY_DRIVER == 1 /* ADC */
     RG_LOGI("Initializing ADC battery driver...");

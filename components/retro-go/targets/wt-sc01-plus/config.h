@@ -38,24 +38,24 @@
 
 
 // Input via MCP23S17 SPI GPIO expander on extension header
-// SPI2 native IOMUX pins: CS=GPIO10, MOSI=GPIO11, CLK=GPIO12, MISO=GPIO13
+// CS=GPIO10, SCK=GPIO11, MOSI=GPIO12, MISO=GPIO13
 #define RG_GPIO_GAMEPAD_SPI_CS          GPIO_NUM_10
-#define RG_GPIO_GAMEPAD_SPI_MOSI        GPIO_NUM_11
-#define RG_GPIO_GAMEPAD_SPI_CLK         GPIO_NUM_12
+#define RG_GPIO_GAMEPAD_SPI_CLK         GPIO_NUM_11
+#define RG_GPIO_GAMEPAD_SPI_MOSI        GPIO_NUM_12
 #define RG_GPIO_GAMEPAD_SPI_MISO        GPIO_NUM_13
 #define RG_GAMEPAD_MCP23S17_MAP {\
-    {RG_KEY_UP,     .num = 0,  .level = 0},\
-    {RG_KEY_LEFT,   .num = 1,  .level = 0},\
-    {RG_KEY_RIGHT,  .num = 2,  .level = 0},\
-    {RG_KEY_DOWN,   .num = 3,  .level = 0},\
-    {RG_KEY_A,      .num = 4,  .level = 0},\
-    {RG_KEY_B,      .num = 5,  .level = 0},\
-    {RG_KEY_X,      .num = 6,  .level = 0},\
-    {RG_KEY_Y,      .num = 7,  .level = 0},\
-    {RG_KEY_START,  .num = 8,  .level = 0},\
-    {RG_KEY_SELECT, .num = 9,  .level = 0},\
-    {RG_KEY_MENU,   .num = 10, .level = 0},\
-    {RG_KEY_OPTION, .num = 11, .level = 0},\
+    {RG_KEY_START,  .num = 0,  .level = 0},\
+    {RG_KEY_SELECT, .num = 1,  .level = 0},\
+    {RG_KEY_MENU,   .num = 2,  .level = 0},\
+    {RG_KEY_OPTION, .num = 3,  .level = 0},\
+    {RG_KEY_X,      .num = 4,  .level = 0},\
+    {RG_KEY_Y,      .num = 5,  .level = 0},\
+    {RG_KEY_A,      .num = 6,  .level = 0},\
+    {RG_KEY_B,      .num = 7,  .level = 0},\
+    {RG_KEY_DOWN,   .num = 8,  .level = 0},\
+    {RG_KEY_RIGHT,  .num = 9,  .level = 0},\
+    {RG_KEY_LEFT,   .num = 10, .level = 0},\
+    {RG_KEY_UP,     .num = 11, .level = 0},\
 }
 
 // Battery
